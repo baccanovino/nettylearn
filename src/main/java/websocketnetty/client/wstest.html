@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<br>
+<script type="text/javascript">
+    var socket;
+    if(!window.WebSocket){
+        window.WebSocket = window.WebSocket;
+    }
+    if(window.WebSocket) {
+        socket = new WebSocket("ws://127.0.0.1:8080/websocket");
+        socket.onmessage = function (event) {
+            var ta = document.getElementById('restext');
+            ta.value = '';
+            ta.value = event.data;
+        };
+        socket.onopen = function (event) {
+            var ta = document.getElementById('restext');
+            ta.value = '启动正常';
+        }
+        socket.onclose = function (event) {
+            var ta = document.getElementById('restext');
+            ta.value = '';
+            ta.value = 'websocket close';
+        }
+    }else{
+            alert('浏览器不支持websocket');
+    }
+
+    function send(msg) {
+        if(!window.WebSocket){
+            return;
+        }
+        if(socket.readyState == WebSocket.OPEN){
+            socket.send(msg);
+        }else{
+            alert('ws没有建立成功');
+        }
+    }
+</script>
+<form onsubmit="return false">
+    <input type="text" name="message" value="netty实践" />
+    <br><br>
+    <input type="button" value="send ws message" onclick="send(this.form.message.value)" />
+    <hr color="blue"/>
+    <h3>服务端返回的消息</h3>
+    <textarea id="restext" style="width:500px;height: 300px;"></textarea>
+</form>
+</body>
+</html>
